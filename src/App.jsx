@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Save, List, Trash2, Filter, ChevronDown, ChevronUp, ExternalLink, Image as ImageIcon, Check, ArrowLeft, User, LogOut, Mail, AlertTriangle } from 'lucide-react';
 
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+// --- FIREBASE IMPORTS ---
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
+import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
+import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, getDoc } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
+// --- CONFIGURAÇÃO DO FIREBASE (LOCAL) ---
+// 1. Crie um projeto em console.firebase.google.com
+// 2. Adicione um Web App
+// 3. Copie as chaves e cole abaixo:
+const localFirebaseConfig = {
   apiKey: "AIzaSyCD734ugUX1mDON_0vtXx3a7OU7iUUdbZ0",
   authDomain: "magic-card-list.firebaseapp.com",
   projectId: "magic-card-list",
@@ -19,9 +20,9 @@ const firebaseConfig = {
   measurementId: "G-KT023KDPN3"
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+// --- INICIALIZAÇÃO SEGURA DO FIREBASE ---
+let app, auth, db;
+let firebaseInitialized = false;
 
 try {
   // Tenta usar a config do ambiente (aqui do chat) ou a local (seu PC)
